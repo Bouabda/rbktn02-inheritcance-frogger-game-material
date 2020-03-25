@@ -1,5 +1,5 @@
 // Enemies our player must avoid
-var Enemy = function(x,y) {
+var Enemy = function(x , y , speed) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
@@ -7,8 +7,10 @@ var Enemy = function(x,y) {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     this.x = x || 0;
-    this.y = y //|| Math.floor(Math.random()* 606);
-    this.speed = 150
+    this.y = y;  //|| Math.floor(Math.random()* 606);
+    this.speed = speed || 150;
+    
+        
 };
 
 // Update the enemy's position, required method for game
@@ -21,6 +23,16 @@ Enemy.prototype.update = function(dt) {
     this.x += dt*this.speed;
     if (this.x > 505 ) { 
         this.x = -50
+        this.speed += 20;
+        console.log(this.speed);
+    }
+    if( 0 < player.y && player.y< 251 && this.y-37.5 < player.y && this.y +37.5 > player.y && Math.floor(this.x) >= player.x-50.5 && Math.floor(this.x) <= player.x+50.5){ 
+        console.log(player.x, player.y ,Math.floor(this.x ))
+         player.x=0
+         player.y=360
+    for (var i = 0 ; i < allEnemies.length ; i++){
+            allEnemies[i].speed=150;
+         }
     }
     
   
@@ -40,18 +52,11 @@ var Player = function(x,y) {
   this.x = x || 0;
   this.y = y || 0;
   this.speed = 50;
+  this.score ;   
 } 
 
-Player.prototype.update = function(){
-    for (var i=0 ; i< allEnemies.length ; i++){
-        if( 0 < this.y && this.y< 240 && allEnemies[i].y===this.y+30 && Math.floor(allEnemies[i].x) >= this.x-10 && Math.floor(allEnemies[i].x) <= this.x+10){ 
-            console.log(this.x, this.y ,Math.floor(allEnemies[i].x ))
-             this.x=0
-             this.y=360
-        }
-    }
-   
-};
+Player.prototype.update = function(){};
+
 Player.prototype.render = function(){
  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 
@@ -78,9 +83,9 @@ Player.prototype.handleInput = function(key){
             }
 
             if (key === 'up' && this.y > -5) { 
-                this.y -= 80 ;
+                this.y -= 75 ;
             } if (key === 'down' && this.y < 420) { 
-                this.y += 80 ;
+                this.y += 75 ;
             }
     //  }
       
@@ -91,9 +96,9 @@ Player.prototype.handleInput = function(key){
 // Place the player object in a variable called player
 var player = new Player(0,360);
 var allEnemies = [];
-allEnemies.push(new Enemy(100,230));
-allEnemies.push(new Enemy(50,150));
-allEnemies.push(new Enemy(100,70));
+allEnemies.push(new Enemy(0,225));
+allEnemies.push(new Enemy(150,145));
+allEnemies.push(new Enemy(300,65));
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
