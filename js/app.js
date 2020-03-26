@@ -16,23 +16,29 @@ var Enemy = function(x , y , speed) {
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 
+
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
     this.x += dt*this.speed;
     if (this.x > 505 ) { 
-        this.x = -50
+        this.x = -50;
         this.speed += 20;
-        console.log(this.speed);
+        // console.log(this.speed);
     }
-    if( 0 < player.y && player.y< 251 && this.y-37.5 < player.y && this.y +37.5 > player.y && Math.floor(this.x) >= player.x-50.5 && Math.floor(this.x) <= player.x+50.5){ 
-        console.log(player.x, player.y ,Math.floor(this.x ))
-         player.x=0
-         player.y=360
-    for (var i = 0 ; i < allEnemies.length ; i++){
-            allEnemies[i].speed=150;
+    if( 0 < player.y && player.y < 251 && this.y-37.5 < player.y && this.y +37.5 > player.y && Math.floor(this.x) >= player.x-50.5 && Math.floor(this.x) <= player.x+50.5){ 
+        //console.log(player.x, player.y ,Math.floor(this.x ))
+        game.lives--;   
+        player.reset(); 
+        for (var i = 0 ; i < allEnemies.length ; i++){
+            allEnemies[i].speed=150
+            
          }
+    }
+    if(game.lives === 0){
+        game.lives = 3
+        // player.reset();       
     }
     
   
@@ -52,19 +58,30 @@ var Player = function(x,y) {
   this.x = x || 0;
   this.y = y || 0;
   this.speed = 50;
-  this.score ;   
+ // this.lives = 3 ;   
 } 
 
-Player.prototype.update = function(){};
+Player.prototype.update = function(){
+    if(this.y >-50 && this.y <0){
+        //console.log(this.y);    
+    setTimeout(()=> { 
+            this.x=0;
+            this.y = 360;        
+        }, 5000); 
+    }
+    
+};
 
 Player.prototype.render = function(){
  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+
 
 };
 
 Player.prototype.handleInput = function(key){
   
-    //  for (var key in obj){
+       
+           //  for (var key in obj){
           if (key=== "left" ) { 
               if(this.x < 0){
                   this.x=500
@@ -83,17 +100,32 @@ Player.prototype.handleInput = function(key){
             }
 
             if (key === 'up' && this.y > -5) { 
-                this.y -= 75 ;
+                this.y -= 80 ;
+                if (this.y >-50 && this.y <0){ 
+                    var win = document.createElement('p');
+                    win.innerHTML = " **YOU WON** "
+                    document.body.appendChild(win);
+                }
+               
             } if (key === 'down' && this.y < 420) { 
-                this.y += 75 ;
+                this.y += 80 ;
             }
     //  }
       
 
 };
+
+Player.prototype.reset=function(){
+    this.x=0;
+    this.y=360;
+    for (var i = 0 ; i < allEnemies.length ; i++){
+        allEnemies[i].speed=150;
+ }
+}
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+
 var player = new Player(0,360);
 var allEnemies = [];
 allEnemies.push(new Enemy(0,225));
@@ -112,7 +144,7 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 });
 var collisition = function() { 
-    console.log("ok")
+    //console.log("ok")
 
     allEnemies[0].imageLeftSide = allEnemies[0].x; 
     allEnemies[0].imageRightSide = allEnemies[0].x + allEnemies[0].imageWidth;  
@@ -124,3 +156,22 @@ var collisition = function() {
     player.imageTopSide = player.y;  
     player.imageDownSide = player.y + player.imageHeight; 
 }
+var  Game = function () { 
+   //Enemy.call(this);   
+   
+   this.lives = 3 ;   
+   this.levels;
+   this.score ;
+}
+
+
+Game.prototype.update =function(){
+  //  if(palyer.y === -40){
+        rowImages.splice(1,0,'images/stone-block.png')
+   // }
+}
+var game = new Game();
+
+// Game.prototype = Object.create(Enemy.prototype);
+// Game.prototype.constructor = Game ;
+   
